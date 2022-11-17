@@ -1,0 +1,13 @@
+{
+  "resourceName": "sailcollect",
+  "policyUUID": "8cddbde7",
+  "bucketName": "sailcollectsensordata",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

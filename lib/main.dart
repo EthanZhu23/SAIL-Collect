@@ -11,23 +11,23 @@ import 'acc_stream.dart';
 import 'gyro_stream.dart';
 import 'mag_stream.dart';
 import 'package:vibration/vibration.dart';
-
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_authenticator/amplify_authenticator.dart';
+import 'amplifyconfiguration.dart';
 
 void main() => runApp(MaterialApp(
-  title: "App",
-  home: MyApp(),
-));
+      title: "App",
+      home: MyApp(),
+    ));
 
 class MyApp extends StatefulWidget {
-
-
   @override
   _MyAppState createState() => _MyAppState();
-
 }
 
 class _MyAppState extends State<MyApp> {
-
   bool _accelAvailable = true;
   bool _gyroAvailable = true;
   bool _magnetometerAvailable = true;
@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
   List _entriesMag = [];
 
   List _entriesAccTest = [];
-  int count =  1;
+  int count = 1;
   DateTime end = DateTime.now();
   DateTime start = DateTime.now();
   DateTime currentTime = DateTime.now();
@@ -55,6 +55,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    _configureAmplify();
     _checkAll();
 
     //testing thresh hold
@@ -69,6 +70,19 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
+  Future<void> _configureAmplify() async {
+    try {
+      final auth = AmplifyAuthCognito();
+      final storage = AmplifyStorageS3();
+      await Amplify.addPlugins([auth, storage]);
+
+      // call Amplify.configure to use the initialized categories in your app
+      await Amplify.configure(amplifyconfig);
+    } on Exception catch (e) {
+      safePrint('An error occurred configuring Amplify: $e');
+    }
+  }
+
   void _checkAccelerometerStatus() async {
     await SensorManager()
         .isSensorAvailable(Sensors.ACCELEROMETER)
@@ -79,7 +93,6 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-
   void _checkGyroscopeStatus() async {
     await SensorManager().isSensorAvailable(Sensors.GYROSCOPE).then((result) {
       setState(() {
@@ -89,7 +102,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _checkMagnetometer() async {
-    await SensorManager().isSensorAvailable(Sensors.MAGNETIC_FIELD).then((result) {
+    await SensorManager()
+        .isSensorAvailable(Sensors.MAGNETIC_FIELD)
+        .then((result) {
       setState(() {
         _magnetometerAvailable = result;
       });
@@ -101,9 +116,9 @@ class _MyAppState extends State<MyApp> {
     _checkGyroscopeStatus();
     _checkMagnetometer();
 
-    if (_accelAvailable & _gyroAvailable & _magnetometerAvailable){
+    if (_accelAvailable & _gyroAvailable & _magnetometerAvailable) {
       _allAvailable = true;
-    }else{
+    } else {
       _allAvailable = false;
     }
   }
@@ -118,9 +133,12 @@ class _MyAppState extends State<MyApp> {
       _accelSubscription = stream.listen((sensorEvent) {
         setState(() {
           _accelData = sensorEvent.data;
-          _entriesAcc.add("${DateTime.now().toString()}, ${_accelData[0]}, ${_accelData[1]}, ${_accelData[2]}");
-          if(_accelData[0] > result || _accelData[1] > result || _accelData[3] > result){
-              _vibrate();
+          _entriesAcc.add(
+              "${DateTime.now().toString()}, ${_accelData[0]}, ${_accelData[1]}, ${_accelData[2]}");
+          if (_accelData[0] > result ||
+              _accelData[1] > result ||
+              _accelData[3] > result) {
+            _vibrate();
           }
         });
       });
@@ -144,16 +162,15 @@ class _MyAppState extends State<MyApp> {
     if (_magnetometerSubscription == null) return;
     _magnetometerSubscription?.cancel();
     _magnetometerSubscription = null;
-
   }
 
-  void _startAll(){
+  void _startAll() {
     _startAccelerometer();
     _startGyroscope();
     _startMagnetometer();
   }
 
-  void _stopAll(){
+  void _stopAll() {
     _stopAccelerometer();
     _stopGyroscope();
     _stopMagnetometer();
@@ -163,45 +180,45 @@ class _MyAppState extends State<MyApp> {
   Future<void> _startGyroscope() async {
     if (_gyroSubscription != null) return;
     if (_gyroAvailable) {
-      final stream =
-      await SensorManager().sensorUpdates(sensorId: Sensors.GYROSCOPE,interval: Duration(milliseconds: 28));
+      final stream = await SensorManager().sensorUpdates(
+          sensorId: Sensors.GYROSCOPE, interval: Duration(milliseconds: 28));
       _gyroSubscription = stream.listen((sensorEvent) {
         setState(() {
           _gyroData = sensorEvent.data;
-          _entriesGyro.add("${DateTime.now().toString()}, ${_gyroData[0]}, ${_gyroData[1]}, ${_gyroData[2]}");
+          _entriesGyro.add(
+              "${DateTime.now().toString()}, ${_gyroData[0]}, ${_gyroData[1]}, ${_gyroData[2]}");
         });
       });
     }
   }
-
 
   Future<void> _startMagnetometer() async {
     if (_magnetometerSubscription != null) return;
     if (_magnetometerAvailable) {
-      final stream =
-      await SensorManager().sensorUpdates(sensorId: Sensors.MAGNETIC_FIELD,interval:Duration(milliseconds: 28) );
+      final stream = await SensorManager().sensorUpdates(
+          sensorId: Sensors.MAGNETIC_FIELD,
+          interval: Duration(milliseconds: 28));
       _magnetometerSubscription = stream.listen((sensorEvent) {
         setState(() {
           _magnetometerData = sensorEvent.data;
-          _entriesMag.add("${DateTime.now().toString()}, ${_magnetometerData[0]}, ${_magnetometerData[1]}, ${_magnetometerData[2]}");
+          _entriesMag.add(
+              "${DateTime.now().toString()}, ${_magnetometerData[0]}, ${_magnetometerData[1]}, ${_magnetometerData[2]}");
         });
       });
     }
   }
 
-
-
-  Future<int>  savefile (_entriesAcc, _entriesGyro, _entriesMag) async {
+  Future<int> savefile(_entriesAcc, _entriesGyro, _entriesMag) async {
     await Permission.storage.request();
     final directory = await getExternalStorageDirectory();
     String newPath = "";
     print("directory: $directory");
     List<String>? paths = directory?.path.split("/");
-    for(int x = 1; x < paths!.length; x++){
+    for (int x = 1; x < paths!.length; x++) {
       String folder = paths[x];
-      if(folder != "Android"){
+      if (folder != "Android") {
         newPath += "/" + folder;
-      } else{
+      } else {
         break;
       }
     }
@@ -210,14 +227,12 @@ class _MyAppState extends State<MyApp> {
     newPath = newPath + "/sensor_model/" + time;
     Directory directory1 = Directory(newPath);
     bool exist = await directory1.exists();
-    if(!exist){
+    if (!exist) {
       await directory1.create(recursive: true);
     }
 
-
-
     final checkPathExistence = await directory1.exists();
-    if(!checkPathExistence){
+    if (!checkPathExistence) {
       await directory1.create();
     }
 
@@ -228,23 +243,42 @@ class _MyAppState extends State<MyApp> {
 
     await accelerometer.writeAsString(csvAccelerometer);
     //print(accelerometer);
+    UploadToS3(accelerometer, 'Accel data', 'Accel data');
 
     //GYROSCOPE
     String csvGyroscope = _entriesGyro.join("\n");
     print("Gyroscope Csv:  $csvGyroscope");
     String gyroscopefilename = "Gyroscope.csv";
-    File gyroscope = File(directory1.path  + "/$gyroscopefilename");
+    File gyroscope = File(directory1.path + "/$gyroscopefilename");
     gyroscope.writeAsString(csvGyroscope);
+    UploadToS3(gyroscope, 'Gyro data', 'Gyro data');
     //print(accelerometer);
 
     //MAGNETOMETER
     String csvMagnetometer = _entriesMag.join("\n");
     print("Magnetometer Csv:  $csvMagnetometer");
     String magnetometerfilename = "Magnetometer.csv";
-    File magnetometer = File(directory1.path  + "/$magnetometerfilename");
+    File magnetometer = File(directory1.path + "/$magnetometerfilename");
     magnetometer.writeAsString(csvMagnetometer);
+    UploadToS3(magnetometer, 'Magnetometer data', 'Magnetometer data');
 
     return 1;
+  }
+
+  Future<void> UploadToS3(
+      File fileToUpload, String keyString, String dataType) async {
+    try {
+      final UploadFileResult result = await Amplify.Storage.uploadFile(
+          local: fileToUpload,
+          key: 'keyString',
+          onProgress: (progress) {
+            safePrint(
+                '${dataType} data sent: ${progress.getFractionCompleted()}');
+          });
+      safePrint('Succesfully uploaded file: ${result.key}');
+    } on StorageException catch (e) {
+      safePrint('Error uploading file $e');
+    }
   }
 
   Future<void> _checkaccrange(int i) async {
@@ -257,219 +291,192 @@ class _MyAppState extends State<MyApp> {
       _accelSubscription_test = stream.listen((sensorEvent) {
         setState(() {
           _writedata(sensorEvent.data);
-
         });
       });
     }
   }
 
-  Future<void> _writedata(List a) async{
+  Future<void> _writedata(List a) async {
     currentTime = DateTime.now();
     _entriesAccTest.add(currentTime);
 
-    if(currentTime.compareTo(_entriesAccTest[0].add(const Duration(seconds: 10)))>0){
+    if (currentTime
+            .compareTo(_entriesAccTest[0].add(const Duration(seconds: 10))) >
+        0) {
       final diff_time = currentTime.difference(start).inSeconds;
-      max_range = _entriesAccTest.length/diff_time;
+      max_range = _entriesAccTest.length / diff_time;
       condition = true;
     }
-
-}
-  Future<void> _getThreshold() async{
-    result = await Navigator.push(context,
-        MaterialPageRoute(
-
-        builder: (context) => Range(),
-    )
-    );
-
   }
 
-  Future<void> _vibrate() async{
+  Future<void> _getThreshold() async {
+    result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Range(),
+        ));
+  }
+
+  Future<void> _vibrate() async {
     Vibration.vibrate(duration: 1000);
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter Sensors App'),
-        ),
-        body: Container(
-          padding: EdgeInsets.all(16.0),
-          alignment: AlignmentDirectional.topCenter,
-          child: Column(
-            children: <Widget>[
-
-              Padding(padding: EdgeInsets.only(top: 16.0)),
-
-              Text(
-                "Accelerometer Enabled: $_accelAvailable",
-                textAlign: TextAlign.center,
-              ),
-
-              Padding(padding: EdgeInsets.only(top: 16.0)),
-              Text(
-                "[0](X) = ${_accelData[0].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    "[1](Y) = ${_accelData[1].toStringAsFixed(3)}",
-                    textAlign: TextAlign.center,
-                  ),
-
-                  Padding(padding: EdgeInsets.only(right: 52.0)),
-
-                  MaterialButton(
-                    child: Text("Start streaming"),
-                    color: Colors.green,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AccelerometerStream()),
-                      );
-                    },
-                  ),
-
-                ],
-              ),
-
-              Text(
-                "[2](Z) = ${_accelData[2].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-
-
-
-              Padding(padding: EdgeInsets.only(top: 16.0)),
-              Text(
-                "Gyroscope Enabled: $_gyroAvailable",
-                textAlign: TextAlign.center,
-              ),
-
-              Padding(padding: EdgeInsets.only(top: 16.0)),
-
-              Text(
-                "[0](X) = ${_gyroData[0].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    "[1](Y) = ${_gyroData[1].toStringAsFixed(3)}",
-                    textAlign: TextAlign.center,
-                  ),
-
-                  Padding(padding: EdgeInsets.only(right: 52.0)),
-
-                  MaterialButton(
-                    child: Text("Start streaming"),
-                    color: Colors.green,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GyroscopeStream()),
-                      );
-                    },
-                  ),
-
-                ],
-              ),
-
-              Text(
-                "[2](Z) = ${_gyroData[2].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-
-              Padding(padding: EdgeInsets.only(top: 16.0)),
-
-              Text(
-                "Magnetometer Enabled: $_magnetometerAvailable",
-                textAlign: TextAlign.center,
-              ),
-              Padding(padding: EdgeInsets.only(top: 16.0)),
-              Text(
-                "[0](X) = ${_magnetometerData[0].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    "[1](Y) = ${_magnetometerData[1].toStringAsFixed(3)}",
-                    textAlign: TextAlign.center,
-                  ),
-                  Padding(padding: EdgeInsets.only(right: 52.0)),
-
-                  MaterialButton(
-                    child: Text("Start streaming"),
-                    color: Colors.green,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MagnetometerStream()),
-                      );
-                    },
-                  ),
-
-                ],
-              ),
-
-              Text(
-                "[2](Z) = ${_magnetometerData[2].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-              Padding(padding: EdgeInsets.only(top: 50.0)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  MaterialButton(
-                    child: Text("Start"),
-                    color: Colors.green,
-                    onPressed: _allAvailable ? () => _startAll() : null,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                  ),
-                  MaterialButton(
-                    child: Text("Stop"),
-                    color: Colors.red,
-                    onPressed: _allAvailable ? () => _stopAll() : null,
-                  ),
-                ],
-              ),
-              Padding(padding: EdgeInsets.only(top: 25.0)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                MaterialButton(
-                  child: Text("Set Sensor Threshold"),
-                  color: condition ? Colors.orange : Colors.grey ,
-                  onPressed: (){
-                    _getThreshold();
-                  },
-                  ),
-                ],
-              ),
-
-
-            ],
-
+    return Authenticator(
+      child: MaterialApp(
+        builder: Authenticator.builder(),
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Flutter Sensors App'),
           ),
-
+          body: Container(
+            padding: EdgeInsets.all(16.0),
+            alignment: AlignmentDirectional.topCenter,
+            child: Column(
+              children: <Widget>[
+                Padding(padding: EdgeInsets.only(top: 16.0)),
+                Text(
+                  "Accelerometer Enabled: $_accelAvailable",
+                  textAlign: TextAlign.center,
+                ),
+                Padding(padding: EdgeInsets.only(top: 16.0)),
+                Text(
+                  "[0](X) = ${_accelData[0].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      "[1](Y) = ${_accelData[1].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+                    Padding(padding: EdgeInsets.only(right: 52.0)),
+                    MaterialButton(
+                      child: Text("Start streaming"),
+                      color: Colors.green,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AccelerometerStream()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                Text(
+                  "[2](Z) = ${_accelData[2].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+                Padding(padding: EdgeInsets.only(top: 16.0)),
+                Text(
+                  "Gyroscope Enabled: $_gyroAvailable",
+                  textAlign: TextAlign.center,
+                ),
+                Padding(padding: EdgeInsets.only(top: 16.0)),
+                Text(
+                  "[0](X) = ${_gyroData[0].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      "[1](Y) = ${_gyroData[1].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+                    Padding(padding: EdgeInsets.only(right: 52.0)),
+                    MaterialButton(
+                      child: Text("Start streaming"),
+                      color: Colors.green,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => GyroscopeStream()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                Text(
+                  "[2](Z) = ${_gyroData[2].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+                Padding(padding: EdgeInsets.only(top: 16.0)),
+                Text(
+                  "Magnetometer Enabled: $_magnetometerAvailable",
+                  textAlign: TextAlign.center,
+                ),
+                Padding(padding: EdgeInsets.only(top: 16.0)),
+                Text(
+                  "[0](X) = ${_magnetometerData[0].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      "[1](Y) = ${_magnetometerData[1].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+                    Padding(padding: EdgeInsets.only(right: 52.0)),
+                    MaterialButton(
+                      child: Text("Start streaming"),
+                      color: Colors.green,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MagnetometerStream()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                Text(
+                  "[2](Z) = ${_magnetometerData[2].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+                Padding(padding: EdgeInsets.only(top: 50.0)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    MaterialButton(
+                      child: Text("Start"),
+                      color: Colors.green,
+                      onPressed: _allAvailable ? () => _startAll() : null,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                    ),
+                    MaterialButton(
+                      child: Text("Stop"),
+                      color: Colors.red,
+                      onPressed: _allAvailable ? () => _stopAll() : null,
+                    ),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.only(top: 25.0)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    MaterialButton(
+                      child: Text("Set Sensor Threshold"),
+                      color: condition ? Colors.orange : Colors.grey,
+                      onPressed: () {
+                        _getThreshold();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       ),
-      
     );
   }
 }

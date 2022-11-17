@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-sailcollect-dev-105054-authRole",
+      "UnauthRoleArn": "arn:aws:iam::988376271004:role/amplify-sailcollect-dev-105054-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::988376271004:role/amplify-sailcollect-dev-105054-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-sailcollect-dev-105054-deployment",
+      "UnauthRoleName": "amplify-sailcollect-dev-105054-unauthRole",
+      "StackName": "amplify-sailcollect-dev-105054",
+      "StackId": "arn:aws:cloudformation:us-east-1:988376271004:stack/amplify-sailcollect-dev-105054/01358420-6698-11ed-a557-1290a6ed1983",
+      "AmplifyAppId": "dznivu6lqkpoz"
+    },
+    "categories": {
+      "auth": {
+        "sailcollecte414be07": {}
+      },
+      "storage": {
+        "sailcollect": {}
+      }
+    }
+  }
+}
