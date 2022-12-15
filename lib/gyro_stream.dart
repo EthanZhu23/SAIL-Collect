@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oscilloscope/oscilloscope.dart';
-import 'package:flutter_sensors/flutter_sensors.dart';
 import 'package:motion_sensors/motion_sensors.dart';
 
 

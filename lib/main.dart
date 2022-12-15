@@ -2,10 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_sensors/flutter_sensors.dart';
-import 'package:sensor_model_1/slide_bar.dart';
-import 'internalStorage.dart';
 import 'package:path_provider/path_provider.dart';
-import 'slide_bar.dart';
+import 'acc_thresh.dart';
 import 'gyro_thresh.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'acc_stream.dart';
@@ -29,38 +27,38 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
+  //sensor status
   bool _accelAvailable = true;
   bool _gyroAvailable = true;
   bool _magnetometerAvailable = true;
   bool _allAvailable = true;
   bool condition = true;
+
+  //list to hold each event from the sensor
   List<double> _accelData = List.filled(3, 0.0);
   List<double> _gyroData = List.filled(3, 0.0);
   List<double> _magnetometerData = List.filled(3, 0.0);
-  StreamSubscription? _accelSubscription_test;
+
+  //streaming sub for each sensor
   StreamSubscription? _accelSubscription;
   StreamSubscription? _gyroSubscription;
   StreamSubscription? _magnetometerSubscription;
+
+  //list to hold the whole listened data
   List _entriesAcc = [];
   List _entriesGyro = [];
   List _entriesMag = [];
 
-  List _entriesAccTest = [];
-  int count =  1;
-  DateTime end = DateTime.now();
-  DateTime start = DateTime.now();
-  DateTime currentTime = DateTime.now();
-  double max_range = 400;
-  int acc_thresh = 0;
-  int gyro_thresh = 0;
+  //init threshold with a large value
+  int acc_thresh = 50000;
+  int gyro_thresh = 50000;
 
   @override
   void initState() {
     super.initState();
+    //check the status of all sensors(active or not?)
     _checkAll();
 
-    //testing thresh hold
-    //_checkaccrange(count);
   }
 
   @override
@@ -72,30 +70,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _checkAccelerometerStatus() async {
-    await SensorManager()
-        .isSensorAvailable(Sensors.ACCELEROMETER)
-        .then((result) {
-      setState(() {
-        _accelAvailable = result;
-      });
-    });
+
+    _accelAvailable = await SensorManager().isSensorAvailable(Sensors.ACCELEROMETER);
   }
 
 
   void _checkGyroscopeStatus() async {
-    await SensorManager().isSensorAvailable(Sensors.GYROSCOPE).then((result) {
-      setState(() {
-        _gyroAvailable = result;
-      });
-    });
+
+    _gyroAvailable = await SensorManager().isSensorAvailable(Sensors.GYROSCOPE);
   }
 
   void _checkMagnetometer() async {
-    await SensorManager().isSensorAvailable(Sensors.MAGNETIC_FIELD).then((result) {
-      setState(() {
-        _magnetometerAvailable = result;
-      });
-    });
+
+    _magnetometerAvailable = await SensorManager().isSensorAvailable(Sensors.MAGNETIC_FIELD);
   }
 
   void _checkAll() async {
@@ -110,29 +97,10 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<void> _startAccelerometer() async {
-    if (_accelSubscription != null) return;
-    if (_accelAvailable) {
-      final stream = await SensorManager().sensorUpdates(
-        sensorId: Sensors.ACCELEROMETER,
-        interval: Duration(milliseconds: 28),
-      );
-      _accelSubscription = stream.listen((sensorEvent) {
-        setState(() {
-          _accelData = sensorEvent.data;
-          _entriesAcc.add("${DateTime.now().toString()}, ${_accelData[0]}, ${_accelData[1]}, ${_accelData[2]}");
-          if(_accelData[0] > acc_thresh || _accelData[1] > acc_thresh || _accelData[3] > acc_thresh){
-              _vibrate();
-          }
-        });
-      });
-    }
-  }
-
   void _stopAccelerometer() {
     if (_accelSubscription == null) return;
     _accelSubscription?.cancel();
-    _accelSubscription_test?.cancel();
+
     _accelSubscription = null;
   }
 
@@ -162,6 +130,27 @@ class _MyAppState extends State<MyApp> {
     savefile(_entriesAcc, _entriesGyro, _entriesMag);
   }
 
+  //start accelerometer, listen to the sensor data, and vibrate if exceed the threshold
+  Future<void> _startAccelerometer() async {
+    if (_accelSubscription != null) return;
+    if (_accelAvailable) {
+      final stream = await SensorManager().sensorUpdates(
+        sensorId: Sensors.ACCELEROMETER,
+        interval: Duration(milliseconds: 28),
+      );
+      _accelSubscription = stream.listen((sensorEvent) {
+        setState(() {
+          _accelData = sensorEvent.data;
+          _entriesAcc.add("${DateTime.now().toString()}, ${_accelData[0]}, ${_accelData[1]}, ${_accelData[2]}");
+          if(_accelData[0] > acc_thresh || _accelData[1] > acc_thresh || _accelData[3] > acc_thresh){
+            _vibrate();
+          }
+        });
+      });
+    }
+  }
+
+  //start gyroscope, listen to the sensor data, and vibrate if exceed the threshold
   Future<void> _startGyroscope() async {
     if (_gyroSubscription != null) return;
     if (_gyroAvailable) {
@@ -179,7 +168,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-
+  //start magnetometer, listen to the sensor data
   Future<void> _startMagnetometer() async {
     if (_magnetometerSubscription != null) return;
     if (_magnetometerAvailable) {
@@ -195,7 +184,7 @@ class _MyAppState extends State<MyApp> {
   }
 
 
-
+  //write file to the internal storage and ask permission to write
   Future<int>  savefile (_entriesAcc, _entriesGyro, _entriesMag) async {
     await Permission.storage.request();
     final directory = await getExternalStorageDirectory();
@@ -240,7 +229,7 @@ class _MyAppState extends State<MyApp> {
     String gyroscopefilename = "Gyroscope.csv";
     File gyroscope = File(directory1.path  + "/$gyroscopefilename");
     gyroscope.writeAsString(csvGyroscope);
-    //print(accelerometer);
+
 
     //MAGNETOMETER
     String csvMagnetometer = _entriesMag.join("\n");
@@ -252,33 +241,7 @@ class _MyAppState extends State<MyApp> {
     return 1;
   }
 
-  Future<void> _checkaccrange(int i) async {
-    if (_accelSubscription != null) return;
-    if (_accelAvailable) {
-      final stream = await SensorManager().sensorUpdates(
-        sensorId: Sensors.ACCELEROMETER,
-        interval: Sensors.SENSOR_DELAY_FASTEST,
-      );
-      _accelSubscription_test = stream.listen((sensorEvent) {
-        setState(() {
-          _writedata(sensorEvent.data);
-
-        });
-      });
-    }
-  }
-
-  Future<void> _writedata(List a) async{
-    currentTime = DateTime.now();
-    _entriesAccTest.add(currentTime);
-
-    if(currentTime.compareTo(_entriesAccTest[0].add(const Duration(seconds: 10)))>0){
-      final diff_time = currentTime.difference(start).inSeconds;
-      max_range = _entriesAccTest.length/diff_time;
-      condition = true;
-    }
-
-}
+  //get the acc threshold from the setting page
   Future<void> _getAccThreshold() async{
     acc_thresh = await Navigator.push(context,
         MaterialPageRoute(
@@ -289,6 +252,7 @@ class _MyAppState extends State<MyApp> {
 
   }
 
+  //get the gyro threshold from the setting page
   Future<void> _getGyroThreshold() async{
     gyro_thresh = await Navigator.push(context,
         MaterialPageRoute(
@@ -299,6 +263,7 @@ class _MyAppState extends State<MyApp> {
 
   }
 
+  //vibration function
   Future<void> _vibrate() async{
     Vibration.vibrate(duration: 1000);
   }

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+
 
 
 
 
 
 class Acc_range extends StatefulWidget {
-  //final double max;
-  // Range({super.key, required this.max});
 
   @override
   State<Acc_range> createState() => _AccelerometerRange();
@@ -17,18 +15,8 @@ class Acc_range extends StatefulWidget {
 
 class _AccelerometerRange extends State<Acc_range> {
 
-
+  //init the slide bar value
   double _currentSliderValue = 20;
-  StreamSubscription? _accelSubscription;
-  bool _accelAvailable = true;
-  List _entriesAcc = [];
-  List<double> _accelData = List.filled(3, 0.0);
-  int count =  1;
-  DateTime end = DateTime.now();
-  DateTime start = DateTime.now();
-  DateTime currentTime = DateTime.now();
-
-  double max_range = 0;
 
   static const String _title = 'Setting Accelerometer range';
 

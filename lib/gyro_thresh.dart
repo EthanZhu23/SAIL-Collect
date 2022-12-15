@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 
 
@@ -19,16 +18,7 @@ class _GyroRange extends State<Gyro_range> {
 
 
   double _currentSliderValue = 20;
-  StreamSubscription? _accelSubscription;
-  bool _gyrolAvailable = true;
-  List _entriesAcc = [];
-  List<double> _gyroData = List.filled(3, 0.0);
-  int count =  1;
-  DateTime end = DateTime.now();
-  DateTime start = DateTime.now();
-  DateTime currentTime = DateTime.now();
 
-  double max_range = 0;
 
   static const String _title = 'Setting Gyroscope range';
 
