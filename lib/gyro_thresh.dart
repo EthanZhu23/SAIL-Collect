@@ -5,24 +5,24 @@ import 'dart:async';
 
 
 
-class Acc_range extends StatefulWidget {
+class Gyro_range extends StatefulWidget {
   //final double max;
   // Range({super.key, required this.max});
 
   @override
-  State<Acc_range> createState() => _AccelerometerRange();
+  State<Gyro_range> createState() => _GyroRange();
 
 
 }
 
-class _AccelerometerRange extends State<Acc_range> {
+class _GyroRange extends State<Gyro_range> {
 
 
   double _currentSliderValue = 20;
   StreamSubscription? _accelSubscription;
-  bool _accelAvailable = true;
+  bool _gyrolAvailable = true;
   List _entriesAcc = [];
-  List<double> _accelData = List.filled(3, 0.0);
+  List<double> _gyroData = List.filled(3, 0.0);
   int count =  1;
   DateTime end = DateTime.now();
   DateTime start = DateTime.now();
@@ -30,7 +30,7 @@ class _AccelerometerRange extends State<Acc_range> {
 
   double max_range = 0;
 
-  static const String _title = 'Setting Accelerometer range';
+  static const String _title = 'Setting Gyroscope range';
 
   @override
   void initState(){
@@ -52,14 +52,14 @@ class _AccelerometerRange extends State<Acc_range> {
           child: Column(
               children: <Widget>[
                 Text(
-                  (_currentSliderValue.round()/10).toString() + 'g',
+                  (_currentSliderValue.round()).toString() + '°/s',
                   textAlign: TextAlign.center,
                 ),
 
                 Slider(value: _currentSliderValue,
                   max: 150,
                   divisions: 15,
-                  label: (_currentSliderValue.round()/10).toString() + 'g',
+                  label: (_currentSliderValue.round()).toString() + '°/s',
                   onChanged: (double value) {
                     setState(() {
                       _currentSliderValue = value;

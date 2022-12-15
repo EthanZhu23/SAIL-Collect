@@ -6,6 +6,7 @@ import 'package:sensor_model_1/slide_bar.dart';
 import 'internalStorage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'slide_bar.dart';
+import 'gyro_thresh.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'acc_stream.dart';
 import 'gyro_stream.dart';
@@ -50,7 +51,8 @@ class _MyAppState extends State<MyApp> {
   DateTime start = DateTime.now();
   DateTime currentTime = DateTime.now();
   double max_range = 400;
-  int result = 0;
+  int acc_thresh = 0;
+  int gyro_thresh = 0;
 
   @override
   void initState() {
@@ -119,7 +121,7 @@ class _MyAppState extends State<MyApp> {
         setState(() {
           _accelData = sensorEvent.data;
           _entriesAcc.add("${DateTime.now().toString()}, ${_accelData[0]}, ${_accelData[1]}, ${_accelData[2]}");
-          if(_accelData[0] > result || _accelData[1] > result || _accelData[3] > result){
+          if(_accelData[0] > acc_thresh || _accelData[1] > acc_thresh || _accelData[3] > acc_thresh){
               _vibrate();
           }
         });
@@ -169,6 +171,9 @@ class _MyAppState extends State<MyApp> {
         setState(() {
           _gyroData = sensorEvent.data;
           _entriesGyro.add("${DateTime.now().toString()}, ${_gyroData[0]}, ${_gyroData[1]}, ${_gyroData[2]}");
+          if(_gyroData[0] > gyro_thresh || _gyroData[1] > gyro_thresh || _gyroData[3] > gyro_thresh){
+            _vibrate();
+          }
         });
       });
     }
@@ -274,12 +279,22 @@ class _MyAppState extends State<MyApp> {
     }
 
 }
-  Future<void> _getThreshold() async{
-    result = await Navigator.push(context,
+  Future<void> _getAccThreshold() async{
+    acc_thresh = await Navigator.push(context,
         MaterialPageRoute(
 
-        builder: (context) => Range(),
+        builder: (context) => Acc_range(),
     )
+    );
+
+  }
+
+  Future<void> _getGyroThreshold() async{
+    gyro_thresh = await Navigator.push(context,
+        MaterialPageRoute(
+
+          builder: (context) => Gyro_range(),
+        )
     );
 
   }
@@ -448,16 +463,29 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ],
               ),
-              Padding(padding: EdgeInsets.only(top: 25.0)),
+              Padding(padding: EdgeInsets.only(top: 10.0)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                 MaterialButton(
-                  child: Text("Set Sensor Threshold"),
+                  child: Text("Set Acc Sensor Threshold"),
                   color: condition ? Colors.orange : Colors.grey ,
                   onPressed: (){
-                    _getThreshold();
+                    _getAccThreshold();
                   },
+                  ),
+                ],
+              ),
+              Padding(padding: EdgeInsets.only(top: 10.0)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  MaterialButton(
+                    child: Text("Set Gyro Sensor Threshold"),
+                    color: condition ? Colors.orange : Colors.grey ,
+                    onPressed: (){
+                      _getGyroThreshold();
+                    },
                   ),
                 ],
               ),
