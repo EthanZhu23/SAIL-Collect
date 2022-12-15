@@ -271,25 +271,25 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Flutter Sensors App'),
         ),
         body: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(screenWidth * 0.05),
           alignment: AlignmentDirectional.topCenter,
           child: Column(
             children: <Widget>[
-
-              Padding(padding: EdgeInsets.only(top: 16.0)),
 
               Text(
                 "Accelerometer Enabled: $_accelAvailable",
                 textAlign: TextAlign.center,
               ),
 
-              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Padding(padding: EdgeInsets.only(top: screenHeight * 0.01)),
               Text(
                 "[0](X) = ${_accelData[0].toStringAsFixed(3)}",
                 textAlign: TextAlign.center,
@@ -304,7 +304,7 @@ class _MyAppState extends State<MyApp> {
                     textAlign: TextAlign.center,
                   ),
 
-                  Padding(padding: EdgeInsets.only(right: 52.0)),
+                  Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
 
                   MaterialButton(
                     child: Text("Start streaming"),
@@ -327,13 +327,13 @@ class _MyAppState extends State<MyApp> {
 
 
 
-              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
               Text(
                 "Gyroscope Enabled: $_gyroAvailable",
                 textAlign: TextAlign.center,
               ),
 
-              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
 
               Text(
                 "[0](X) = ${_gyroData[0].toStringAsFixed(3)}",
@@ -348,7 +348,7 @@ class _MyAppState extends State<MyApp> {
                     textAlign: TextAlign.center,
                   ),
 
-                  Padding(padding: EdgeInsets.only(right: 52.0)),
+                  Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
 
                   MaterialButton(
                     child: Text("Start streaming"),
@@ -369,7 +369,7 @@ class _MyAppState extends State<MyApp> {
                 textAlign: TextAlign.center,
               ),
 
-              Padding(padding: EdgeInsets.only(top: 16.0)),
+              Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
 
               Text(
                 "Magnetometer Enabled: $_magnetometerAvailable",
@@ -389,7 +389,7 @@ class _MyAppState extends State<MyApp> {
                     "[1](Y) = ${_magnetometerData[1].toStringAsFixed(3)}",
                     textAlign: TextAlign.center,
                   ),
-                  Padding(padding: EdgeInsets.only(right: 52.0)),
+                  Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
 
                   MaterialButton(
                     child: Text("Start streaming"),
@@ -409,7 +409,7 @@ class _MyAppState extends State<MyApp> {
                 "[2](Z) = ${_magnetometerData[2].toStringAsFixed(3)}",
                 textAlign: TextAlign.center,
               ),
-              Padding(padding: EdgeInsets.only(top: 50.0)),
+              Padding(padding: EdgeInsets.only(top: screenHeight * 0.05)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -428,7 +428,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ],
               ),
-              Padding(padding: EdgeInsets.only(top: 10.0)),
+              Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -441,7 +441,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ],
               ),
-              Padding(padding: EdgeInsets.only(top: 10.0)),
+              Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
