@@ -281,183 +281,185 @@ class _MyAppState extends State<MyApp> {
         body: Container(
           padding: EdgeInsets.all(screenWidth * 0.05),
           alignment: AlignmentDirectional.topCenter,
-          child: Column(
-            children: <Widget>[
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
 
-              Text(
-                "Accelerometer Enabled: $_accelAvailable",
-                textAlign: TextAlign.center,
-              ),
+                Text(
+                  "Accelerometer Enabled: $_accelAvailable",
+                  textAlign: TextAlign.center,
+                ),
 
-              Padding(padding: EdgeInsets.only(top: screenHeight * 0.01)),
-              Text(
-                "[0](X) = ${_accelData[0].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    "[1](Y) = ${_accelData[1].toStringAsFixed(3)}",
-                    textAlign: TextAlign.center,
-                  ),
-
-                  Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
-
-                  MaterialButton(
-                    child: Text("Start streaming"),
-                    color: Colors.green,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AccelerometerStream()),
-                      );
-                    },
-                  ),
-
-                ],
-              ),
-
-              Text(
-                "[2](Z) = ${_accelData[2].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
+                Padding(padding: EdgeInsets.only(top: screenHeight * 0.01)),
+                Text(
+                  "[0](X) = ${_accelData[0].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
 
 
-
-              Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
-              Text(
-                "Gyroscope Enabled: $_gyroAvailable",
-                textAlign: TextAlign.center,
-              ),
-
-              Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
-
-              Text(
-                "[0](X) = ${_gyroData[0].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    "[1](Y) = ${_gyroData[1].toStringAsFixed(3)}",
-                    textAlign: TextAlign.center,
-                  ),
-
-                  Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
-
-                  MaterialButton(
-                    child: Text("Start streaming"),
-                    color: Colors.green,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GyroscopeStream()),
-                      );
-                    },
-                  ),
-
-                ],
-              ),
-
-              Text(
-                "[2](Z) = ${_gyroData[2].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-
-              Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
-
-              Text(
-                "Magnetometer Enabled: $_magnetometerAvailable",
-                textAlign: TextAlign.center,
-              ),
-              Padding(padding: EdgeInsets.only(top: 16.0)),
-              Text(
-                "[0](X) = ${_magnetometerData[0].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    "[1](Y) = ${_magnetometerData[1].toStringAsFixed(3)}",
-                    textAlign: TextAlign.center,
-                  ),
-                  Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
-
-                  MaterialButton(
-                    child: Text("Start streaming"),
-                    color: Colors.green,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MagnetometerStream()),
-                      );
-                    },
-                  ),
-
-                ],
-              ),
-
-              Text(
-                "[2](Z) = ${_magnetometerData[2].toStringAsFixed(3)}",
-                textAlign: TextAlign.center,
-              ),
-              Padding(padding: EdgeInsets.only(top: screenHeight * 0.05)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  MaterialButton(
-                    child: Text("Start"),
-                    color: Colors.green,
-                    onPressed: _allAvailable ? () => _startAll() : null,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                  ),
-                  MaterialButton(
-                    child: Text("Stop"),
-                    color: Colors.red,
-                    onPressed: _allAvailable ? () => _stopAll() : null,
-                  ),
-                ],
-              ),
-              Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                MaterialButton(
-                  child: Text("Set Acc Sensor Threshold"),
-                  color: condition ? Colors.orange : Colors.grey ,
-                  onPressed: (){
-                    _getAccThreshold();
-                  },
-                  ),
-                ],
-              ),
-              Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
+                    Text(
+                      "[1](Y) = ${_accelData[1].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+
+                    Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
+
+                    MaterialButton(
+                      child: Text("Start streaming"),
+                      color: Colors.green,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AccelerometerStream()),
+                        );
+                      },
+                    ),
+
+                  ],
+                ),
+
+                Text(
+                  "[2](Z) = ${_accelData[2].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+
+
+
+                Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
+                Text(
+                  "Gyroscope Enabled: $_gyroAvailable",
+                  textAlign: TextAlign.center,
+                ),
+
+                Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
+
+                Text(
+                  "[0](X) = ${_gyroData[0].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      "[1](Y) = ${_gyroData[1].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+
+                    Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
+
+                    MaterialButton(
+                      child: Text("Start streaming"),
+                      color: Colors.green,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GyroscopeStream()),
+                        );
+                      },
+                    ),
+
+                  ],
+                ),
+
+                Text(
+                  "[2](Z) = ${_gyroData[2].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+
+                Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
+
+                Text(
+                  "Magnetometer Enabled: $_magnetometerAvailable",
+                  textAlign: TextAlign.center,
+                ),
+                Padding(padding: EdgeInsets.only(top: 16.0)),
+                Text(
+                  "[0](X) = ${_magnetometerData[0].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      "[1](Y) = ${_magnetometerData[1].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+                    Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
+
+                    MaterialButton(
+                      child: Text("Start streaming"),
+                      color: Colors.green,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MagnetometerStream()),
+                        );
+                      },
+                    ),
+
+                  ],
+                ),
+
+                Text(
+                  "[2](Z) = ${_magnetometerData[2].toStringAsFixed(3)}",
+                  textAlign: TextAlign.center,
+                ),
+                Padding(padding: EdgeInsets.only(top: screenHeight * 0.05)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    MaterialButton(
+                      child: Text("Start"),
+                      color: Colors.green,
+                      onPressed: _allAvailable ? () => _startAll() : null,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                    ),
+                    MaterialButton(
+                      child: Text("Stop"),
+                      color: Colors.red,
+                      onPressed: _allAvailable ? () => _stopAll() : null,
+                    ),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
                   MaterialButton(
-                    child: Text("Set Gyro Sensor Threshold"),
+                    child: Text("Set Acc Sensor Threshold"),
                     color: condition ? Colors.orange : Colors.grey ,
                     onPressed: (){
-                      _getGyroThreshold();
+                      _getAccThreshold();
                     },
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    MaterialButton(
+                      child: Text("Set Gyro Sensor Threshold"),
+                      color: condition ? Colors.orange : Colors.grey ,
+                      onPressed: (){
+                        _getGyroThreshold();
+                      },
+                    ),
+                  ],
+                ),
 
 
-            ],
+              ],
 
+            ),
           ),
 
         ),
