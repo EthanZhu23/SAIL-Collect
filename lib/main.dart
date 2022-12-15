@@ -273,6 +273,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    double buttonWidth = 135;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -291,9 +292,22 @@ class _MyAppState extends State<MyApp> {
                 ),
 
                 Padding(padding: EdgeInsets.only(top: screenHeight * 0.01)),
-                Text(
-                  "[0](X) = ${_accelData[0].toStringAsFixed(3)}",
-                  textAlign: TextAlign.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "[0](X) = ${_accelData[0].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(
+                      width: screenWidth * 0.02,
+                    ),
+
+                    SizedBox(
+                      width: buttonWidth,
+                    )
+                  ],
                 ),
 
 
@@ -305,25 +319,43 @@ class _MyAppState extends State<MyApp> {
                       textAlign: TextAlign.center,
                     ),
 
-                    Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
+                    SizedBox(
+                      width: screenWidth * 0.02,
+                    ),
 
-                    MaterialButton(
-                      child: Text("Start streaming"),
-                      color: Colors.green,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AccelerometerStream()),
-                        );
-                      },
+                    SizedBox(
+                      width: buttonWidth,
+                      child: MaterialButton(
+                        child: Text("Start streaming"),
+                        color: Colors.green,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AccelerometerStream()),
+                          );
+                        },
+                      ),
                     ),
 
                   ],
                 ),
 
-                Text(
-                  "[2](Z) = ${_accelData[2].toStringAsFixed(3)}",
-                  textAlign: TextAlign.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "[2](Z) = ${_accelData[2].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(
+                      width: screenWidth * 0.02,
+                    ),
+
+                    SizedBox(
+                      width: buttonWidth,
+                    )
+                  ],
                 ),
 
 
@@ -336,9 +368,22 @@ class _MyAppState extends State<MyApp> {
 
                 Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
 
-                Text(
-                  "[0](X) = ${_gyroData[0].toStringAsFixed(3)}",
-                  textAlign: TextAlign.center,
+                Row (
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                    "[0](X) = ${_gyroData[0].toStringAsFixed(3)}",
+                    textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(
+                      width: screenWidth * 0.02,
+                    ),
+
+                    SizedBox(
+                      width: buttonWidth,
+                    )
+                  ],
                 ),
 
                 Row(
@@ -349,25 +394,44 @@ class _MyAppState extends State<MyApp> {
                       textAlign: TextAlign.center,
                     ),
 
-                    Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
+                    SizedBox(
+                      width: screenWidth * 0.02,
+                    ),
 
-                    MaterialButton(
-                      child: Text("Start streaming"),
-                      color: Colors.green,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => GyroscopeStream()),
-                        );
-                      },
+
+                    SizedBox(
+                      width: buttonWidth,
+                      child: MaterialButton(
+                        color: Colors.green,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => GyroscopeStream()),
+                          );
+                        },
+                        child: Text("Start streaming"),
+                      ),
                     ),
 
                   ],
                 ),
 
-                Text(
-                  "[2](Z) = ${_gyroData[2].toStringAsFixed(3)}",
-                  textAlign: TextAlign.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "[2](Z) = ${_gyroData[2].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(
+                      width: screenWidth * 0.02,
+                    ),
+
+                    SizedBox(
+                      width: buttonWidth,
+                    )
+                  ],
                 ),
 
                 Padding(padding: EdgeInsets.only(top: screenHeight *0.01)),
@@ -377,9 +441,22 @@ class _MyAppState extends State<MyApp> {
                   textAlign: TextAlign.center,
                 ),
                 Padding(padding: EdgeInsets.only(top: 16.0)),
-                Text(
-                  "[0](X) = ${_magnetometerData[0].toStringAsFixed(3)}",
-                  textAlign: TextAlign.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "[0](X) = ${_magnetometerData[0].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(
+                      width: screenWidth * 0.02,
+                    ),
+
+                    SizedBox(
+                      width: buttonWidth,
+                    )
+                  ],
                 ),
 
 
@@ -390,25 +467,43 @@ class _MyAppState extends State<MyApp> {
                       "[1](Y) = ${_magnetometerData[1].toStringAsFixed(3)}",
                       textAlign: TextAlign.center,
                     ),
-                    Padding(padding: EdgeInsets.only(right: screenWidth * 0.1)),
+                    SizedBox(
+                      width: screenWidth * 0.02,
+                    ),
 
-                    MaterialButton(
-                      child: Text("Start streaming"),
-                      color: Colors.green,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MagnetometerStream()),
-                        );
-                      },
+                    SizedBox(
+                      width: buttonWidth,
+                      child: MaterialButton(
+                        child: Text("Start streaming"),
+                        color: Colors.green,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MagnetometerStream()),
+                          );
+                        },
+                      ),
                     ),
 
                   ],
                 ),
 
-                Text(
-                  "[2](Z) = ${_magnetometerData[2].toStringAsFixed(3)}",
-                  textAlign: TextAlign.center,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "[2](Z) = ${_magnetometerData[2].toStringAsFixed(3)}",
+                      textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(
+                      width: screenWidth * 0.02,
+                    ),
+
+                    SizedBox(
+                      width: buttonWidth,
+                    )
+                  ],
                 ),
                 Padding(padding: EdgeInsets.only(top: screenHeight * 0.05)),
                 Row(
@@ -464,7 +559,7 @@ class _MyAppState extends State<MyApp> {
 
         ),
       ),
-      
+
     );
   }
 }
